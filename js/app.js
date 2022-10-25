@@ -2,13 +2,20 @@ const listaCursos = document.querySelector('#lista-cursos')
 const contenedorCarrito = document.querySelector('#lista-carrito tbody')
 const carrito = document.querySelector('#carrito')
 const vaciarCarrito = document.querySelector('#vaciar-carrito')
-let articulosCarrito = []
+let articulosCarrito
+
+//Muestra los cursos del local Storage
+document.addEventListener('DOMContentLoaded',()=>{
+    articulosCarrito = JSON.parse(localStorage.getItem('articulos')) || [] 
+
+    crearHTML()
+})
 
 listaCursos.addEventListener('click',agregarCurso)
 carrito.addEventListener('click', eliminarCurso)
 vaciarCarrito.addEventListener('click', () =>{
     articulosCarrito = [] //Reseteamos el arreglo
-
+    sincronizarStorage()
     limpiarHTML()// Limpiamos el HTML
 })
 
@@ -42,7 +49,7 @@ function agregarCursoAlCarrito(curso){
     //Agregamos el curso seleccionado al array o aumentamos la cantidad si ya existe
     if(existe){
         articulosCarrito.forEach(x =>{
-            if(x.id=== curso.id){
+            if(x.id === curso.id){
                 x.cantidad++
             }
         })
@@ -75,6 +82,8 @@ function crearHTML(){
         //Agrega el html del carrito en el tbody
         contenedorCarrito.appendChild(row)
     });
+
+    sincronizarStorage();
 }
 
 //Elimina los cursos del tbody
@@ -85,6 +94,11 @@ function limpiarHTML(){
     while(contenedorCarrito.firstChild){
         contenedorCarrito.removeChild(contenedorCarrito.lastChild)
     }
+}
+
+//Agregamos el array del carrito al storage
+function sincronizarStorage(){
+    localStorage.setItem('articulos',JSON.stringify(articulosCarrito))
 }
 
 //Elimina un curso del carrito
@@ -100,6 +114,4 @@ function eliminarCurso(e){
 
         crearHTML()//Volvemos a crear el HTML con el articulo eliminado
     }
-
-   
 }
